@@ -1,6 +1,7 @@
 ﻿using System.Text;
 
 using Indra.Astra.CLI;
+using Indra.Astra.Tokens;
 
 using Meep.Tech.Text;
 
@@ -215,107 +216,74 @@ namespace Indra.Astra.CLI {
 
         #region Output
 
-        public static Dictionary<TokenType, ANSI.RGB> DefaultColors { get; }
+        public static Dictionary<IToken, ANSI.RGB> DefaultColors { get; }
             = new() {
                 // words
-                { TokenType.WORD, ANSI.RGB.Cyan },
-                { TokenType.HYBRID, ANSI.RGB.Cyan.Lighter},
-                { TokenType.NUMBER, ANSI.RGB.Blue },
-                { TokenType.ESCAPE, ANSI.RGB.Green.Brighter },
-                { TokenType.UNDERSCORE, ANSI.RGB.Cyan.Brighter },
-                { TokenType.DOUBLE_UNDERSCORE, ANSI.RGB.Cyan.Brighter },
-                { TokenType.TRIPLE_UNDERSCORE, ANSI.RGB.Cyan.Brighter },
+                {Word.Type, ANSI.RGB.Cyan },
+                {Number.Type, ANSI.RGB.Blue },
+                {Escape.Type, ANSI.RGB.Green.Brighter },
 
                 // comments
-                { TokenType.CLOSE_BLOCK_COMMENT, ANSI.RGB.Gray },
-                { TokenType.OPEN_BLOCK_COMMENT, ANSI.RGB.Gray },
-                { TokenType.DOC_HASH_COMMENT, ANSI.RGB.Gray },
-                { TokenType.EOL_HASH_COMMENT, ANSI.RGB.Gray },
-                { TokenType.EOL_SLASH_COMMENT, ANSI.RGB.Gray },
+                {CloseBlockComment.Type, ANSI.RGB.Gray },
+                {OpenBlockComment.Type, ANSI.RGB.Gray },
 
                 // brackets
-                { TokenType.OPEN_PARENTHESIS, ANSI.RGB.Yellow },
-                { TokenType.CLOSE_PARENTHESIS, ANSI.RGB.Yellow },
-                { TokenType.OPEN_BRACE, ANSI.RGB.Yellow },
-                { TokenType.CLOSE_BRACE, ANSI.RGB.Yellow },
-                { TokenType.OPEN_BRACKET, ANSI.RGB.Yellow },
-                { TokenType.CLOSE_BRACKET, ANSI.RGB.Yellow },
-                { TokenType.OPEN_ANGLE, ANSI.RGB.Yellow },
-                { TokenType.CLOSE_ANGLE, ANSI.RGB.Yellow },
+                {LeftParenthesis.Type, ANSI.RGB.Yellow },
+                {RightParenthesis.Type, ANSI.RGB.Yellow },
+                {LeftBrace.Type, ANSI.RGB.Yellow },
+                {RightBrace.Type, ANSI.RGB.Yellow },
+                {LeftBracket.Type, ANSI.RGB.Yellow },
+                {RightBracket.Type, ANSI.RGB.Yellow },
+                {LeftAngle.Type, ANSI.RGB.Yellow },
+                {RightAngle.Type, ANSI.RGB.Yellow },
 
                 // quotes
-                { TokenType.DOUBLE_QUOTE, ANSI.RGB.Green.Lighter },
-                { TokenType.SINGLE_QUOTE, ANSI.RGB.Green.Lighter.Lighter },
-                { TokenType.BACKTICK, ANSI.RGB.Yellow.Lighter },
+                {DoubleQuote.Type, ANSI.RGB.Green.Lighter },
+                {SingleQuote.Type, ANSI.RGB.Green.Lighter.Lighter },
+                {Backtick.Type, ANSI.RGB.Yellow.Lighter },
 
                 // assigners
-                {TokenType.DOUBLE_RIGHT_ANGLE, ANSI.RGB.Red },
-                {TokenType.DOUBLE_LEFT_ANGLE, ANSI.RGB.Red },
-                {TokenType.EQUALS, ANSI.RGB.Red },
-                {TokenType.DASH, ANSI.RGB.Red },
-                {TokenType.COLON_ASSIGNER, ANSI.RGB.Red },
-                {TokenType.DOUBLE_COLON_ASSIGNER, ANSI.RGB.Red },
-                {TokenType.TRIPLE_COLON_ASSIGNER, ANSI.RGB.Red },
-                {TokenType.RIGHT_CHEVRON, ANSI.RGB.Red },
-                {TokenType.LEFT_CHEVRON, ANSI.RGB.Red },
-                {TokenType.RIGHT_EQUALS_ARROW, ANSI.RGB.Red },
-                {TokenType.LEFT_EQUALS_ARROW, ANSI.RGB.Red },
-                {TokenType.RIGHT_TILDE_ARROW, ANSI.RGB.Red },
-                {TokenType.LEFT_TILDE_ARROW, ANSI.RGB.Red },
-                {TokenType.RIGHT_DASH_ARROW, ANSI.RGB.Red },
-                {TokenType.LEFT_DASH_ARROW, ANSI.RGB.Red },
-                {TokenType.RIGHT_PLUS_ARROW, ANSI.RGB.Red },
-                {TokenType.LEFT_PLUS_ARROW, ANSI.RGB.Red },
-                {TokenType.HASH_COLON, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_HASH_COLON, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_HASH_DOUBLE_COLON, ANSI.RGB.Magenta.Darker },
-                {TokenType.COLON_RIGHT_ANGLE, ANSI.RGB.Magenta.Darker },
-                {TokenType.COLON_DOUBLE_RIGHT_ANGLE, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_COLON_DOUBLE_RIGHT_ANGLE, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_COLON_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_COLON_RIGHT_ANGLE, ANSI.RGB.Magenta.Darker },
+                {DoubleRightAngle.Type, ANSI.RGB.Red },
+                {DoubleLeftAngle.Type, ANSI.RGB.Red },
+                {Equal.Type, ANSI.RGB.Red },
+                {Dash.Type, ANSI.RGB.Red },
+                {DoubleColon.Type, ANSI.RGB.Red },
+                {TripleColon.Type, ANSI.RGB.Red },
+                {RightEqualArrow.Type, ANSI.RGB.Red },
+                {LeftEqualArrow.Type, ANSI.RGB.Red },
+                {RightTildeArrow.Type, ANSI.RGB.Red },
+                {LeftTildeArrow.Type, ANSI.RGB.Red },
+                {RightDashArrow.Type, ANSI.RGB.Red },
+                {LeftDashArrow.Type, ANSI.RGB.Red },
+                {RightPlusArrow.Type, ANSI.RGB.Red },
+                {LeftPlusArrow.Type, ANSI.RGB.Red },
 
                 // compound assigners
-                {TokenType.PLUS_EQUALS, ANSI.RGB.Red.Lighter },
-                {TokenType.MINUS_EQUALS, ANSI.RGB.Red.Lighter },
-                {TokenType.TIMES_EQUALS, ANSI.RGB.Red.Lighter },
-                {TokenType.DIVISION_EQUALS, ANSI.RGB.Red.Lighter },
-                {TokenType.PERCENT_EQUALS, ANSI.RGB.Red.Lighter },
-                {TokenType.DOUBLE_QUESTION_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_BANG_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOT_EQUALS, ANSI.RGB.Magenta.Darker },
+                {PlusEqual.Type, ANSI.RGB.Red.Lighter },
+                {DashEqual.Type, ANSI.RGB.Red.Lighter },
+                {StarEqual.Type, ANSI.RGB.Red.Lighter },
+                {SlashEqual.Type, ANSI.RGB.Red.Lighter },
+                {PercentEqual.Type, ANSI.RGB.Red.Lighter },
+                {DoubleQuestionEqual.Type, ANSI.RGB.Magenta.Darker },
+                {DoubleBangEqual.Type, ANSI.RGB.Magenta.Darker },
+                {DotEqual.Type, ANSI.RGB.Magenta.Darker },
 
                 // comparison
-                {TokenType.DOUBLE_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.GREATER_OR_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.EQUALS_OR_LESS, ANSI.RGB.Magenta.Darker },
-                {TokenType.GREATER_THAN, ANSI.RGB.Magenta.Darker },
-                {TokenType.LESS_THAN, ANSI.RGB.Magenta.Darker },
-                {TokenType.BANG_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.QUESTION_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.HASH_EQUALS, ANSI.RGB.Magenta.Darker },
-                {TokenType.DOUBLE_HASH_EQUALS, ANSI.RGB.Magenta.Darker },
+                {DoubleEqual.Type, ANSI.RGB.Magenta.Darker },
+                {BangEqual.Type, ANSI.RGB.Magenta.Darker },
+                {QuestionEqual.Type, ANSI.RGB.Magenta.Darker },
+                {HashEqual.Type, ANSI.RGB.Magenta.Darker },
+                {DoubleHashEqual.Type, ANSI.RGB.Magenta.Darker },
 
                 // lookup
-                {TokenType.DOT, ANSI.RGB.Magenta.Brighter },
-                {TokenType.SLASH, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOUBLE_DOT, ANSI.RGB.Magenta.Brighter },
-                {TokenType.TRIPLE_DOT, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOUBLE_COLON_PREFIX, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOT_BANG, ANSI.RGB.Magenta.Brighter },
-                {TokenType.BANG_DOT, ANSI.RGB.Magenta.Brighter },
-                {TokenType.QUESTION_DOT, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOT_QUESTION, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOUBLE_DOT_BANG, ANSI.RGB.Magenta.Brighter },
-                {TokenType.DOUBLE_DOT_QUESTION, ANSI.RGB.Magenta.Brighter },
+                {Dot.Type, ANSI.RGB.Magenta.Brighter },
+                {Slash.Type, ANSI.RGB.Magenta.Brighter },
+                {DoubleDot.Type, ANSI.RGB.Magenta.Brighter },
+                {TripleDot.Type, ANSI.RGB.Magenta.Brighter },
 
                 // tags
-                {TokenType.HASH, ANSI.RGB.Yellow.Brighter },
-                {TokenType.DOUBLE_HASH, ANSI.RGB.Yellow.Brighter },
-
-                // tag lookups
-                {TokenType.DOT_HASH, ANSI.RGB.Orange },
-                {TokenType.DOUBLE_DOT_HASH, ANSI.RGB.Orange },
+                {Hash.Type, ANSI.RGB.Yellow.Brighter },
+                {DoubleHash.Type, ANSI.RGB.Yellow.Brighter },
             };
 
         public static void PrintCodeBlock(Result result, Token[] tokens, bool colorize = true) {
@@ -341,50 +309,19 @@ namespace Indra.Astra.CLI {
             Token[] tokens
         ) {
             StringBuilder result = new();
-            Stack<Token.Open> closures = [];
 
             int position = 0;
             foreach(Token token in tokens) {
-                string padding = source[position..token.Position];
-                result.Append(padding);
-
-                string content = source[token.Position..(token.Position + token.Length)];
-                position = token.End;
-                ANSI.RGB color = GetColor(token);
-
-                if(token.Type == TokenType.EOF) {
+                if(token.Type is EndOfFile) {
                     break;
                 }
-                else if(token is Token.Open start
-                    && closures.TryPeek(out Token.Open? current)
-                    && !current.Type.IsQuote()
-                ) {
-                    closures.Push(start);
-                }
-                else if(token is Token.Close end) {
-                    if(closures.TryPeek(out Token.Open? open) && DelimiterPairs[end.Type] == open.Type) {
-                        closures.Pop();
-                    }
-                    else {
-                        color = open?.Type switch {
-                            TokenType.DOUBLE_QUOTE => ANSI.RGB.Green.Darken(0.1),
-                            TokenType.SINGLE_QUOTE => ANSI.RGB.Green.Lighten(0.1),
-                            TokenType.BACKTICK => ANSI.RGB.Yellow.Darken(0.1),
-                            _ => color
-                        };
-                    }
-                }
-                else {
-                    if(closures.Count > 0) {
-                        Token.Open currentDelimiter = closures.Peek();
-                        color = currentDelimiter.Type switch {
-                            TokenType.DOUBLE_QUOTE => ANSI.RGB.Green,
-                            TokenType.SINGLE_QUOTE => ANSI.RGB.Green.Lighter,
-                            TokenType.BACKTICK => ANSI.RGB.Yellow.Darker,
-                            _ => color
-                        };
-                    }
-                }
+
+                string padding = source[position..token.Index];
+                result.Append(padding);
+
+                string content = source[token.Index..(token.Index + token.Length)];
+                position = token.End;
+                ANSI.RGB color = GetColor(token);
 
                 result.Append(content.Color(color));
             }
@@ -402,33 +339,11 @@ namespace Indra.Astra.CLI {
             Token[] tokens,
             string source
         ) {
-            Stack<(Token.Open open, ANSI.RGB color)> closures = new Stack<(Token.Open open, ANSI.RGB color)>();
             for(int i = 0; i < tokens.Length; i++) {
                 ANSI.RGB color = GetColor(tokens[i]);
-                (ANSI.RGB color, int depth, bool isStart)? closure = null;
-
-                if(tokens[i] is Token.Open open) {
-                    ANSI.RGB depthColor = ANSI.RGB.Random;
-                    closures.Push((open, depthColor));
-                    closure = (depthColor, closures.Count, true);
-                }
-                else if(tokens[i] is Token.Close close) {
-                    if(closures.TryPeek(out (Token.Open open, ANSI.RGB color) start)
-                        && close.Open == start.open
-                    ) {
-                        closure = (closures.Pop().color, closures.Count + 1, false);
-                    }
-                }
 
                 string text = tokens[i].ToString(source, parts => {
                     parts.name = parts.name.Color(color);
-
-                    if (closure is not null) {
-                        parts.info
-                            += $"{(closure.Value.isStart ? "(" : "")}{closure.Value.depth}{(closure.Value.isStart ? ")" : "")}"
-                            .Color(closure.Value.color);
-                    }
-
                     return parts;
                 });
 
