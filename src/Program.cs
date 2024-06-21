@@ -181,7 +181,7 @@ namespace Indra.Astra.CLI {
 
             // code 
             Console.WriteLine("Code:");
-            PrintCodeBlock(result, tokens, colorize);
+            PrintCodeBlock(result, colorize);
             Console.WriteLine("---");
 
             // print the result status
@@ -288,14 +288,14 @@ namespace Indra.Astra.CLI {
                 {DoubleHash.Type, ANSI.RGB.Yellow.Brighter },
             };
 
-        public static void PrintCodeBlock(Result result, Token[] tokens, bool colorize = true) {
+        public static void PrintCodeBlock(Result result, bool colorize = true) {
             // top border
             Console.Write($"{"╔",8}");
 
             // lines of code
             Console.WriteLine(("\n"
                     + (colorize
-                        ? Colorize(result.Source, tokens)
+                        ? Colorize(result.Source, result.Tokens ?? [])
                         : result.Source)
                     ).Replace("\n", $"\n{"║",8}").PadLeft(8));
 
