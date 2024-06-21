@@ -249,6 +249,8 @@ namespace Indra.Astra.CLI {
                 {Dash.Type, ANSI.RGB.Red },
                 {DoubleColon.Type, ANSI.RGB.Red },
                 {TripleColon.Type, ANSI.RGB.Red },
+                {TripleLeftAngle.Type, ANSI.RGB.Red },
+                {TripleRightAngle.Type, ANSI.RGB.Red },
                 {RightEqualArrow.Type, ANSI.RGB.Red },
                 {LeftEqualArrow.Type, ANSI.RGB.Red },
                 {RightTildeArrow.Type, ANSI.RGB.Red },
