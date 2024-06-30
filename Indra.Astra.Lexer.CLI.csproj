@@ -8,8 +8,8 @@
   </PropertyGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\libs\utils\cs\Meep.Tech.ANSI\Meep.Tech.ANSI.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\libs\utils\cs\Meep.Tech.Data.Cursor\Meep.Tech.Data.Cursor.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\libs\utils\cs\Meep.Tech.Text.ANSI\Meep.Tech.Text.ANSI.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\libs\utils\cs\Meep.Tech.Collections.Cursor\Meep.Tech.Collections.Cursor.csproj" />
     <ProjectReference Include="..\..\..\libs\lexer\Indra.Astra.Lexer\Indra.Astra.Lexer.csproj" />
   </ItemGroup>
 
