@@ -5,6 +5,7 @@ using Indra.Astra.Tokens;
 
 using Meep.Tech.Text;
 
+using static Indra.Astra.CLI.Lex;
 using static Indra.Astra.Lexer;
 
 using Console = System.Console;
@@ -14,48 +15,6 @@ using Console = System.Console;
     "IDE1006:Naming Styles",
     Justification = "Static Program Class")]
 static class Program {
-    public const string ShortPlainFlag = "-p";
-    public const string LongPlainFlag = "--plain";
-    public const string ShortHelpFlag = "-h";
-    public const string LongHelpFlag = "--help";
-
-    public static readonly (string Short, string Long) PlainFlag
-        = (ShortPlainFlag, LongPlainFlag);
-    public static readonly (string Short, string Long) HelpFlag
-        = (ShortHelpFlag, LongHelpFlag);
-
-    public const string HelpDescription = $"""
-        Astra Lexer CLI.
-        ============================
-        > A command line interface for lexing the Astra Programming Language.
-
-        ----------------------------
-        *Usage*: {Usage}
-
-        ----------------------------
-        *Flags*:
-            [{ShortPlainFlag}|{LongPlainFlag}]: (Optional) Run the script without colorizing the output.
-            [{ShortHelpFlag} |{LongHelpFlag}]:  (Optional) Display this help message.
-
-        ----------------------------
-        *Params*:
-            [script]: (Optional) The script to be lexed. If not provided, an input loop will be started to read the script from the console. You can add a newline using Shift+Enter or exit the input loop using ESC.
-
-        ----------------------------
-        **Keys**: (Input Loop Only)
-            - Enter: Lex the current script.
-            - Shift+Enter: Insert a new line into the current script.
-            - ESC: Exit the input loop. (Exiting the program with the terminal shortcut (usually Ctrl+C) will also exit the input loop.)
-        ```
-    """;
-
-    public const string Usage = $"*Usage*:\n\taxa [{ShortPlainFlag}|{LongPlainFlag}|{ShortHelpFlag}|{LongHelpFlag}] [script]";
-
-    public enum Flags {
-        None = 0,
-        Help = -1,
-        Plain = 2
-    }
 
     static void Main(string[] args) {
         // parse flags
@@ -83,10 +42,10 @@ static class Program {
         // parse args
         if(args.Length == 1) {
             // run the script at the file path
-            Lex.FromFile(args[0], !flags.HasFlag(Flags.Plain));
+            FromFile(args[0], !flags.HasFlag(Flags.Plain));
         }
         else if(args.Length == 0) {
-            Lex.FromLoop(!flags.HasFlag(Flags.Plain));
+            FromLoop(!flags.HasFlag(Flags.Plain));
         }
         else {
             Console.Error.WriteLine($"Too many arguments. Expected {Usage}");
@@ -98,6 +57,50 @@ static class Program {
 namespace Indra.Astra.CLI {
 
     public static class Lex {
+        public const string ShortPlainFlag = "-p";
+        public const string LongPlainFlag = "--plain";
+        public const string ShortHelpFlag = "-h";
+        public const string LongHelpFlag = "--help";
+
+        public static readonly (string Short, string Long) PlainFlag
+        = (ShortPlainFlag, LongPlainFlag);
+        public static readonly (string Short, string Long) HelpFlag
+        = (ShortHelpFlag, LongHelpFlag);
+
+        public const string HelpDescription
+        = $"""
+            Astra Lexer CLI.
+            ============================
+            > A command line interface for lexing the Astra Programming Language.
+
+            ----------------------------
+            *Usage*: {Usage}
+
+            ----------------------------
+            *Flags*:
+                [{ShortPlainFlag}|{LongPlainFlag}]: (Optional) Run the script without colorizing the output.
+                [{ShortHelpFlag} |{LongHelpFlag}]:  (Optional) Display this help message.
+
+            ----------------------------
+            *Params*:
+                [script]: (Optional) The script to be lexed. If not provided, an input loop will be started to read the script from the console. You can add a newline using Shift+Enter or exit the input loop using ESC.
+
+            ----------------------------
+            **Keys**: (Input Loop Only)
+                - Enter: Lex the current script.
+                - Shift+Enter: Insert a new line into the current script.
+                - ESC: Exit the input loop. (Exiting the program with the terminal shortcut (usually Ctrl+C) will also exit the input loop.)
+            ```
+        """;
+
+        public const string Usage
+            = $"*Usage*:\n\tlex [{ShortPlainFlag}|{LongPlainFlag}|{ShortHelpFlag}|{LongHelpFlag}] [script]";
+
+        public enum Flags {
+            None = 0,
+            Help = -1,
+            Plain = 2
+        }
 
         public static void FromFile(string path, bool colorize = true)
             => Run(new StreamReader(
@@ -203,10 +206,10 @@ namespace Indra.Astra.CLI {
             Console.WriteLine("Tokens:");
 
             if(colorize) {
-                _printResultTokens_colorized(tokens, result.Source);
+                _printResultTokens_colorized(tokens, result.Text);
             }
             else {
-                _printResultTokens_plain(tokens, result.Source);
+                _printResultTokens_plain(tokens, result.Text);
             }
 
             // bottom border
@@ -228,12 +231,12 @@ namespace Indra.Astra.CLI {
                 {OpenBlockComment.Type, ANSI.RGB.Gray },
 
                 // brackets
-                {LeftParenthesis.Type, ANSI.RGB.Yellow },
-                {RightParenthesis.Type, ANSI.RGB.Yellow },
-                {LeftBrace.Type, ANSI.RGB.Yellow },
-                {RightBrace.Type, ANSI.RGB.Yellow },
-                {LeftBracket.Type, ANSI.RGB.Yellow },
-                {RightBracket.Type, ANSI.RGB.Yellow },
+                {OpenParenthesis.Type, ANSI.RGB.Yellow },
+                {CloseParenthesis.Type, ANSI.RGB.Yellow },
+                {OpenBrace.Type, ANSI.RGB.Yellow },
+                {CloseBrace.Type, ANSI.RGB.Yellow },
+                {OpenBracket.Type, ANSI.RGB.Yellow },
+                {CloseBracket.Type, ANSI.RGB.Yellow },
                 {LeftAngle.Type, ANSI.RGB.Yellow },
                 {RightAngle.Type, ANSI.RGB.Yellow },
 
@@ -295,8 +298,8 @@ namespace Indra.Astra.CLI {
             // lines of code
             Console.WriteLine(("\n"
                     + (colorize
-                        ? Colorize(result.Source, result.Tokens ?? [])
-                        : result.Source)
+                        ? Colorize(result.Text, result.Tokens ?? [])
+                        : result.Text)
                     ).Replace("\n", $"\n{"║",8}").PadLeft(8));
 
             // bottom border
@@ -304,7 +307,7 @@ namespace Indra.Astra.CLI {
         }
 
         public static string Colorize(Success result)
-            => Colorize(result.Source, result.Tokens ?? []);
+            => Colorize(result.Text, result.Tokens ?? []);
 
         public static string Colorize(
             string source,
@@ -344,12 +347,12 @@ namespace Indra.Astra.CLI {
             for(int i = 0; i < tokens.Length; i++) {
                 ANSI.RGB color = GetColor(tokens[i]);
 
-                string text = tokens[i].ToString(source, parts => {
+                string text = tokens[i].GetDebugText(parts => {
                     parts.name = parts.name.Color(color);
                     return parts;
                 });
 
-                Console.WriteLine($"{"-",8} {tokens[i].ToString(source)}\t\t");
+                Console.WriteLine($"{"-",8} {tokens[i].Text}\t\t");
             }
         }
 
@@ -358,7 +361,7 @@ namespace Indra.Astra.CLI {
             string source
         ) {
             for(int i = 0; i < tokens.Length; i++) {
-                Console.WriteLine($"{"-",8} {tokens[i].ToString(source)}");
+                Console.WriteLine($"{"-",8} {tokens[i].Text}");
             }
         }
 
